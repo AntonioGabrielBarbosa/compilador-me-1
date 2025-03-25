@@ -12,7 +12,6 @@ class Parser {
         while (!isAtEnd()) {
             statement();
         }
-        System.out.println("Código compilado com sucesso!");
     }
 
     private void statement() {
