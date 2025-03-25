@@ -3,7 +3,7 @@ enum enumToken {
     MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT,
     JUMP, ATTACK, DEFEND,
 
-    // Estruturas de Controle
+    // Estruturas de Controle e Keywords
     IF, ELSE, WHILE, FOR,
 
     // Expressões e Operadores

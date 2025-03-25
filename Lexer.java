@@ -4,7 +4,7 @@ import java.util.regex.*;
 
 class Lexer {
     private final String input;
-    private int line = 1; // Contador de linhas
+    private int line = 1;
 
     private static final Pattern TOKEN_PATTERN = Pattern.compile(
         "\\s*(move_up|move_down|move_left|move_right|jump|attack|defend|" + 
@@ -25,7 +25,7 @@ class Lexer {
             if (match.isEmpty()) continue;
 
             if (match.equals("\n")) { 
-                line++; // Incrementa a linha ao encontrar uma quebra de linha
+                line++;
                 continue;
             }
 
@@ -65,7 +65,7 @@ class Lexer {
             tokens.add(new Token(type, match, line));
         }
 
-        tokens.add(new Token(enumToken.EOF, "", line)); // Token de fim de arquivo
+        tokens.add(new Token(enumToken.EOF, "", line));
         return tokens;
     }
 }
