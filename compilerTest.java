@@ -2,7 +2,7 @@ import java.util.List;
 
 public class compilerTest {
     public static void main(String[] args) {
-        String sourceCode = "if ( hero + id1 ) { move_up; attack; } else { move_down; }";
+        String sourceCode = "if(hero) { move_up; attack; } else { move_down; }";
         
         // Executa o analisador léxico
         Lexer lexer = new Lexer(sourceCode);

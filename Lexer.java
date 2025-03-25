@@ -4,13 +4,12 @@ import java.util.regex.*;
 
 class Lexer {
     private final String input;
-    private int pos = 0;
     private int line = 1; // Contador de linhas
 
     private static final Pattern TOKEN_PATTERN = Pattern.compile(
         "\\s*(move_up|move_down|move_left|move_right|jump|attack|defend|" + 
         "if|else|while|for|hero|enemy|treasure|trap|\\d+|[a-zA-Z_][a-zA-Z0-9_]*|" +
-        "\\+|\\-|\\(|\\)|\\{|\\}|;|\\n)"
+        "\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|;|\\n)"
     );
 
     public Lexer(String input) {

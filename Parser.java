@@ -12,6 +12,7 @@ class Parser {
         while (!isAtEnd()) {
             statement();
         }
+        System.out.println("Código compilado com sucesso!");
     }
 
     private void statement() {
@@ -19,8 +20,10 @@ class Parser {
             ifStatement();
         } else if (match(enumToken.WHILE)) {
             whileStatement();
+        } else if (match(enumToken.FOR)) {
+            forStatement();
         } else {
-            assignmentOrExpression();
+            command();
         }
     }
 
@@ -54,9 +57,28 @@ class Parser {
         consume(enumToken.RBRACE, "Esperado '}'");
     }
 
-    private void assignmentOrExpression() {
+    private void forStatement() {
+        consume(enumToken.LPAREN, "Esperado '('");
         expression();
         consume(enumToken.SEMICOLON, "Esperado ';'");
+        expression();
+        consume(enumToken.SEMICOLON, "Esperado ';'");
+        expression();
+        consume(enumToken.RPAREN, "Esperado ')'");
+        consume(enumToken.LBRACE, "Esperado '{'");
+        while (!check(enumToken.RBRACE) && !isAtEnd()) {
+            statement();
+        }
+        consume(enumToken.RBRACE, "Esperado '}'");
+    }
+
+    private void command() {
+        if (match(enumToken.MOVE_UP, enumToken.MOVE_DOWN, enumToken.MOVE_LEFT, enumToken.MOVE_RIGHT,
+                  enumToken.JUMP, enumToken.ATTACK, enumToken.DEFEND)) {
+            consume(enumToken.SEMICOLON, "Esperado ';'");
+        } else {
+            throw error("Comando inválido.");
+        }
     }
 
     private void expression() {
@@ -67,14 +89,10 @@ class Parser {
     }
 
     private void term() {
-        factor();
-    }
-
-    private void factor() {
-        if (match(enumToken.NUMBER, enumToken.IDENTIFIER)) {
+        if (match(enumToken.HERO, enumToken.ENEMY, enumToken.TREASURE, enumToken.TRAP, enumToken.NUMBER)) {
             return;
         }
-        throw error("Esperado número ou identificador.");
+        throw error("Esperado hero, enemy, treasure, trap ou número.");
     }
 
     private boolean match(enumToken... types) {
@@ -112,6 +130,6 @@ class Parser {
 
     private RuntimeException error(String message) {
         int line = tokens.get(current).line;
-        return new RuntimeException("Erro de sintaxe na linha " + line  + ": "  + message);
+        return new RuntimeException("Erro de sintaxe na linha " + line + ": " + message);
     }
 }
