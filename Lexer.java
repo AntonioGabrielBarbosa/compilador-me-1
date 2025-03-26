@@ -1,16 +1,40 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 class Lexer {
     private final String input;
     private int line = 1;
-
     private static final Pattern TOKEN_PATTERN = Pattern.compile(
         "\\s*(move_up|move_down|move_left|move_right|jump|attack|defend|" + 
         "if|else|while|for|hero|enemy|treasure|trap|\\d+|[a-zA-Z_][a-zA-Z0-9_]*|" +
         "\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|;|\\n)"
     );
+    private static final Map<String, enumToken> TOKEN_MAP = new HashMap<>();
+
+    static {
+        TOKEN_MAP.put("move_up", enumToken.MOVE_UP);
+        TOKEN_MAP.put("move_down", enumToken.MOVE_DOWN);
+        TOKEN_MAP.put("move_left", enumToken.MOVE_LEFT);
+        TOKEN_MAP.put("move_right", enumToken.MOVE_RIGHT);
+        TOKEN_MAP.put("jump", enumToken.JUMP);
+        TOKEN_MAP.put("attack", enumToken.ATTACK);
+        TOKEN_MAP.put("defend", enumToken.DEFEND);
+        TOKEN_MAP.put("if", enumToken.IF);
+        TOKEN_MAP.put("else", enumToken.ELSE);
+        TOKEN_MAP.put("while", enumToken.WHILE);
+        TOKEN_MAP.put("for", enumToken.FOR);
+        TOKEN_MAP.put("hero", enumToken.HERO);
+        TOKEN_MAP.put("enemy", enumToken.ENEMY);
+        TOKEN_MAP.put("treasure", enumToken.TREASURE);
+        TOKEN_MAP.put("trap", enumToken.TRAP);
+        TOKEN_MAP.put("+", enumToken.PLUS);
+        TOKEN_MAP.put("-", enumToken.MINUS);
+        TOKEN_MAP.put("(", enumToken.LPAREN);
+        TOKEN_MAP.put(")", enumToken.RPAREN);
+        TOKEN_MAP.put("{", enumToken.LBRACE);
+        TOKEN_MAP.put("}", enumToken.RBRACE);
+        TOKEN_MAP.put(";", enumToken.SEMICOLON);
+    }
 
     public Lexer(String input) {
         this.input = input;
@@ -29,39 +53,10 @@ class Lexer {
                 continue;
             }
 
-            enumToken type;
-            switch (match) {
-                case "move_up": type = enumToken.MOVE_UP; break;
-                case "move_down": type = enumToken.MOVE_DOWN; break;
-                case "move_left": type = enumToken.MOVE_LEFT; break;
-                case "move_right": type = enumToken.MOVE_RIGHT; break;
-                case "jump": type = enumToken.JUMP; break;
-                case "attack": type = enumToken.ATTACK; break;
-                case "defend": type = enumToken.DEFEND; break;
-                case "if": type = enumToken.IF; break;
-                case "else": type = enumToken.ELSE; break;
-                case "while": type = enumToken.WHILE; break;
-                case "for": type = enumToken.FOR; break;
-                case "hero": type = enumToken.HERO; break;
-                case "enemy": type = enumToken.ENEMY; break;
-                case "treasure": type = enumToken.TREASURE; break;
-                case "trap": type = enumToken.TRAP; break;
-                case "+": type = enumToken.PLUS; break;
-                case "-": type = enumToken.MINUS; break;
-                case "(": type = enumToken.LPAREN; break;
-                case ")": type = enumToken.RPAREN; break;
-                case "{": type = enumToken.LBRACE; break;
-                case "}": type = enumToken.RBRACE; break;
-                case ";": type = enumToken.SEMICOLON; break;
-                default:
-                    if (match.matches("\\d+")) {
-                        type = enumToken.NUMBER;
-                    } else {
-                        type = enumToken.IDENTIFIER;
-                    }
-                    break;
+            enumToken type = TOKEN_MAP.getOrDefault(match, null);
+            if (type == null) {
+                type = match.matches("\\d+") ? enumToken.NUMBER : enumToken.IDENTIFIER;
             }
-
             tokens.add(new Token(type, match, line));
         }
 
