@@ -31,10 +31,10 @@ class Parser {
         expression();
         consume(enumToken.RPAREN, "Esperado ')' após condição");
         
-        block(); // Processa o bloco do IF
+        block();
 
         if (match(enumToken.ELSE)) {
-            block(); // Processa o bloco do ELSE (se existir)
+            block(); 
         }
     }
 
