@@ -4,11 +4,13 @@ import java.util.regex.*;
 class Lexer {
     private final String input;
     private int line = 1;
+
     private static final Pattern TOKEN_PATTERN = Pattern.compile(
-        "\\s*(move_up|move_down|move_left|move_right|jump|attack|defend|" + 
+        "move_up|move_down|move_left|move_right|jump|attack|defend|" + 
         "if|else|while|for|hero|enemy|treasure|trap|\\d+|[a-zA-Z_][a-zA-Z0-9_]*|" +
-        "\\+|\\-|\\*|/|\\(|\\)|\\{|\\}|;|\\n)"
+        "[+\\-(){};]"
     );
+
     private static final Map<String, enumToken> TOKEN_MAP = new HashMap<>();
 
     static {
@@ -45,18 +47,18 @@ class Lexer {
         Matcher matcher = TOKEN_PATTERN.matcher(input);
 
         while (matcher.find()) {
-            String match = matcher.group().trim();
-            if (match.isEmpty()) continue;
-
+            String match = matcher.group();
+            
             if (match.equals("\n")) { 
                 line++;
                 continue;
             }
 
-            enumToken type = TOKEN_MAP.getOrDefault(match, null);
+            enumToken type = TOKEN_MAP.get(match);
             if (type == null) {
-                type = match.matches("\\d+") ? enumToken.NUMBER : enumToken.IDENTIFIER;
+                type = Character.isDigit(match.charAt(0)) ? enumToken.NUMBER : enumToken.IDENTIFIER;
             }
+            
             tokens.add(new Token(type, match, line));
         }
 
