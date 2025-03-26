@@ -42,27 +42,45 @@ class Lexer {
         this.input = input;
     }
 
-    public List<Token> tokenize() {
+    public List<Token> tokenize() throws SyntaxErrorException {
         List<Token> tokens = new ArrayList<>();
         Matcher matcher = TOKEN_PATTERN.matcher(input);
 
         while (matcher.find()) {
             String match = matcher.group();
-            
+
+            // Se for uma nova linha, incrementa o contador de linha
             if (match.equals("\n")) { 
                 line++;
                 continue;
             }
 
             enumToken type = TOKEN_MAP.get(match);
+
             if (type == null) {
-                type = Character.isDigit(match.charAt(0)) ? enumToken.NUMBER : enumToken.IDENTIFIER;
+                // Se não for um token válido, verifica se é número ou identificador
+                if (Character.isDigit(match.charAt(0))) {
+                    type = enumToken.NUMBER;
+                } else if (Character.isAlphabetic(match.charAt(0)) || match.charAt(0) == '_') {
+                    type = enumToken.IDENTIFIER;
+                } else {
+                    // Se for um caractere inválido, lança um erro
+                    throw new SyntaxErrorException("Erro de sintaxe: token inválido '" + match + "' na linha " + line);
+                }
             }
-            
+
             tokens.add(new Token(type, match, line));
         }
 
+        // Adiciona o token EOF ao final
         tokens.add(new Token(enumToken.EOF, "", line));
         return tokens;
+    }
+
+    // Exceção personalizada para erros de sintaxe
+    public static class SyntaxErrorException extends Exception {
+        public SyntaxErrorException(String message) {
+            super(message);
+        }
     }
 }
