@@ -27,54 +27,49 @@ class Parser {
     }
 
     private void ifStatement() {
-        consume(enumToken.LPAREN, "Esperado '('");
+        consume(enumToken.LPAREN, "Esperado '(' após 'if'");
         expression();
-        consume(enumToken.RPAREN, "Esperado ')'");
-        consume(enumToken.LBRACE, "Esperado '{'");
-        while (!check(enumToken.RBRACE) && !isAtEnd()) {
-            statement();
-        }
-        consume(enumToken.RBRACE, "Esperado '}'");
+        consume(enumToken.RPAREN, "Esperado ')' após condição");
+        
+        block(); // Processa o bloco do IF
 
         if (match(enumToken.ELSE)) {
-            consume(enumToken.LBRACE, "Esperado '{'");
-            while (!check(enumToken.RBRACE) && !isAtEnd()) {
-                statement();
-            }
-            consume(enumToken.RBRACE, "Esperado '}'");
+            block(); // Processa o bloco do ELSE (se existir)
         }
     }
 
     private void whileStatement() {
-        consume(enumToken.LPAREN, "Esperado '('");
+        consume(enumToken.LPAREN, "Esperado '(' após 'while'");
         expression();
-        consume(enumToken.RPAREN, "Esperado ')'");
-        consume(enumToken.LBRACE, "Esperado '{'");
-        while (!check(enumToken.RBRACE) && !isAtEnd()) {
-            statement();
-        }
-        consume(enumToken.RBRACE, "Esperado '}'");
+        consume(enumToken.RPAREN, "Esperado ')' após condição");
+
+        block();
     }
 
     private void forStatement() {
-        consume(enumToken.LPAREN, "Esperado '('");
+        consume(enumToken.LPAREN, "Esperado '(' após 'for'");
         expression();
-        consume(enumToken.SEMICOLON, "Esperado ';'");
+        consume(enumToken.SEMICOLON, "Esperado ';' após inicialização");
         expression();
-        consume(enumToken.SEMICOLON, "Esperado ';'");
+        consume(enumToken.SEMICOLON, "Esperado ';' após condição");
         expression();
-        consume(enumToken.RPAREN, "Esperado ')'");
-        consume(enumToken.LBRACE, "Esperado '{'");
+        consume(enumToken.RPAREN, "Esperado ')' após incremento");
+
+        block();
+    }
+
+    private void block() {
+        consume(enumToken.LBRACE, "Esperado '{' para abrir bloco");
         while (!check(enumToken.RBRACE) && !isAtEnd()) {
             statement();
         }
-        consume(enumToken.RBRACE, "Esperado '}'");
+        consume(enumToken.RBRACE, "Esperado '}' para fechar bloco");
     }
 
     private void command() {
         if (match(enumToken.MOVE_UP, enumToken.MOVE_DOWN, enumToken.MOVE_LEFT, enumToken.MOVE_RIGHT,
                   enumToken.JUMP, enumToken.ATTACK, enumToken.DEFEND)) {
-            consume(enumToken.SEMICOLON, "Esperado ';'");
+            consume(enumToken.SEMICOLON, "Esperado ';' após comando");
         } else {
             throw error("Comando inválido.");
         }
@@ -88,10 +83,9 @@ class Parser {
     }
 
     private void term() {
-        if (match(enumToken.HERO, enumToken.ENEMY, enumToken.TREASURE, enumToken.TRAP, enumToken.NUMBER)) {
-            return;
+        if (!match(enumToken.HERO, enumToken.ENEMY, enumToken.TREASURE, enumToken.TRAP, enumToken.NUMBER)) {
+            throw error("Esperado hero, enemy, treasure, trap ou número.");
         }
-        throw error("Esperado hero, enemy, treasure, trap ou número.");
     }
 
     private boolean match(enumToken... types) {
@@ -105,8 +99,7 @@ class Parser {
     }
 
     private boolean check(enumToken type) {
-        if (isAtEnd()) return false;
-        return tokens.get(current).type == type;
+        return !isAtEnd() && tokens.get(current).type == type;
     }
 
     private Token advance() {
