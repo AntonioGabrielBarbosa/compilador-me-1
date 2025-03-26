@@ -29,7 +29,6 @@ public class compilerTest {
                 System.out.println(token);
             }
 
-            // Executar análise sintática
             System.out.println("\nAnalisando a sintaxe...");
             try {
                 Parser parser = new Parser(tokens);
