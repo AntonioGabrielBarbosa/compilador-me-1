@@ -58,13 +58,13 @@ class Lexer {
             enumToken type = TOKEN_MAP.get(match);
 
             if (type == null) {
-                // Se não for um token válido, verifica se é número ou identificador
+
                 if (Character.isDigit(match.charAt(0))) {
                     type = enumToken.NUMBER;
                 } else if (Character.isAlphabetic(match.charAt(0)) || match.charAt(0) == '_') {
                     type = enumToken.IDENTIFIER;
                 } else {
-                    // Se for um caractere inválido, lança um erro
+                    
                     throw new SyntaxErrorException("Erro de sintaxe: token inválido '" + match + "' na linha " + line);
                 }
             }
